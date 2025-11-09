@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, NavigationItem } from '../types';
 
 // --- Icon Components (as before) ---
@@ -26,6 +26,7 @@ interface SidebarProps {
   navigationItems: NavigationItem[];
   projectName: string;
   isAdmin: boolean;
+  setIsAdmin: (isAdmin: boolean) => void;
 }
 
 interface NavItemProps {
@@ -50,12 +51,52 @@ const NavItem: React.FC<NavItemProps> = ({ icon, label, isActive, onClick }) => 
   </button>
 );
 
-const Sidebar: React.FC<SidebarProps> = ({ activeView, setActiveView, navigationItems, projectName, isAdmin }) => {
+const Sidebar: React.FC<SidebarProps> = ({ activeView, setActiveView, navigationItems, projectName, isAdmin, setIsAdmin }) => {
+  const [logoClicks, setLogoClicks] = useState(0);
+
+  useEffect(() => {
+    if (logoClicks > 0) {
+      const timer = setTimeout(() => setLogoClicks(0), 3000); // Reset after 3 seconds of inactivity
+      return () => clearTimeout(timer);
+    }
+  }, [logoClicks]);
+
+  const handleLogoClick = () => {
+    if (isAdmin) {
+      // Logout logic
+      if (window.confirm('Apakah Anda yakin ingin keluar dari Panel Admin?')) {
+        setIsAdmin(false);
+        setActiveView('dashboard');
+      }
+    } else {
+      // Login logic
+      const newClicks = logoClicks + 1;
+      setLogoClicks(newClicks);
+
+      if (newClicks >= 5) {
+        const password = window.prompt('Masukkan password admin:');
+        if (password === 'adminOSIS2024') {
+          window.alert('Akses admin diberikan!');
+          setIsAdmin(true);
+          setActiveView('admin');
+        } else if (password !== null) { // Check for null to avoid alert on cancel
+          window.alert('Password salah.');
+        }
+        setLogoClicks(0); // Reset counter after attempt
+      }
+    }
+  };
+
+
   return (
     <aside className="w-64 bg-glass-bg backdrop-blur-2xl border-r border-glass-border p-6 flex-shrink-0 hidden md:flex flex-col">
-      <div className="flex items-center mb-12">
-        <div className="w-10 h-10 bg-gradient-to-tr from-brand-primary to-brand-secondary rounded-lg mr-3 shadow-lg"></div>
-        <h1 className="text-xl font-bold text-white">{projectName}</h1>
+      <div 
+        className="flex items-center mb-12 cursor-pointer group"
+        onClick={handleLogoClick}
+        title={isAdmin ? "Klik untuk logout" : "Admin Access"}
+      >
+        <div className="w-10 h-10 bg-gradient-to-tr from-brand-primary to-brand-secondary rounded-lg mr-3 shadow-lg transition-transform duration-300 group-hover:scale-110"></div>
+        <h1 className="text-xl font-bold text-white transition-colors duration-300 group-hover:text-brand-primary">{projectName}</h1>
       </div>
       <nav className="space-y-3">
         {navigationItems.map(item => (

@@ -72,7 +72,7 @@ const MOCK_ELECTION: Election = {
 
 const App: React.FC = () => {
   const [activeView, setActiveView] = useState<View>('dashboard');
-  const [isAdmin] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(false);
   
   const [dashboardData, setDashboardData] = useState<DashboardData>(MOCK_DASHBOARD_DATA);
   const [workPrograms, setWorkPrograms] = useState<WorkProgram[]>(MOCK_WORK_PROGRAMS);
@@ -196,6 +196,7 @@ const App: React.FC = () => {
           navigationItems={navigationItems}
           projectName="OSIS-HUB"
           isAdmin={isAdmin}
+          setIsAdmin={setIsAdmin}
         />
         <main className="flex-1 p-8 overflow-y-auto h-screen">
           {renderView()}

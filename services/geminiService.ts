@@ -1,21 +1,16 @@
 import { GoogleGenAI } from "@google/genai";
 
-// Fix: Initialize the GoogleGenAI client.
-// Always use new GoogleGenAI({apiKey: process.env.API_KEY});
-// API key is handled externally via process.env.API_KEY.
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-
 /**
  * Generates a summary for a news article using Gemini.
  */
 export const generateNewsSummary = async (articleContent: string): Promise<string> => {
   try {
-    // Fix: Use ai.models.generateContent with the model and contents.
+    // Moved initialization inside the function to prevent startup crashes.
+    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
     const response = await ai.models.generateContent({
       model: 'gemini-2.5-flash',
       contents: `Summarize the following article for a student news feed in one short paragraph: ${articleContent}`,
     });
-    // Fix: Access the text directly from the response object.
     return response.text;
   } catch (error) {
     console.error("Error generating news summary:", error);
@@ -39,12 +34,12 @@ export const generateAspirationResponse = async (aspirationTitle: string, aspira
   `;
 
   try {
-    // Fix: Use ai.models.generateContent with the model and contents.
+    // Moved initialization inside the function to prevent startup crashes.
+    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
     const response = await ai.models.generateContent({
         model: 'gemini-2.5-flash',
         contents: prompt,
     });
-    // Fix: Access the text directly from the response object.
     return response.text;
   } catch (error) {
     console.error("Error generating aspiration response:", error);
