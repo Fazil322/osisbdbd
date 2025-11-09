@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Election, VotingCandidate } from '../../types';
 import CandidateCard from './CandidateCard';
 import CandidateDetailModal from './CandidateDetailModal';
+import VotingResults from './VotingResults';
 
 interface VotingPortalProps {
   election: Election;
@@ -12,8 +13,15 @@ interface VotingPortalProps {
 const VotingPortal: React.FC<VotingPortalProps> = ({ election, onVote, votedCandidateId }) => {
   const [selectedCandidate, setSelectedCandidate] = useState<VotingCandidate | null>(null);
 
-  const votedCandidate = votedCandidateId ? election.candidates.find(c => c.id === votedCandidateId) : null;
+  const isElectionOver = new Date() > new Date(election.endDate);
 
+  // If election is over and has results, show the results view
+  if (isElectionOver && election.results) {
+      return <VotingResults election={election} />;
+  }
+
+  // If user has voted, show the thank you message
+  const votedCandidate = votedCandidateId ? election.candidates.find(c => c.id === votedCandidateId) : null;
   if (votedCandidate) {
     return (
         <div className="flex flex-col items-center justify-center h-full text-center animate-fade-in-up">
@@ -30,6 +38,7 @@ const VotingPortal: React.FC<VotingPortalProps> = ({ election, onVote, votedCand
     );
   }
 
+  // Otherwise, show the voting interface
   return (
     <>
       <div className="space-y-8 animate-fade-in-up">

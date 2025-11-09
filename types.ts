@@ -1,4 +1,4 @@
-export type View = 'dashboard' | 'transparency' | 'aspirations' | 'media' | 'voting';
+export type View = 'dashboard' | 'transparency' | 'aspirations' | 'media' | 'voting' | 'admin';
 
 export type NavigationItem = {
   id: View;
@@ -52,6 +52,7 @@ export interface DashboardData {
 export type WorkProgramStatus = 'Planned' | 'In Progress' | 'Completed' | 'Cancelled';
 
 export interface WorkProgram {
+  id: number; // Added for unique identification
   title: string;
   description: string;
   pic: string; // Person in Charge
@@ -104,6 +105,11 @@ export interface VotingCandidate {
     mission: string[];
 }
 
+export interface ElectionResult {
+    candidateId: number;
+    votes: number;
+}
+
 export interface Election {
     id: number;
     title: string;
@@ -111,4 +117,5 @@ export interface Election {
     startDate: string;
     endDate: string;
     candidates: VotingCandidate[];
+    results?: ElectionResult[];
 }
